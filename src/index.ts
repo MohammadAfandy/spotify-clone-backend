@@ -31,7 +31,6 @@ const cookieOption = {
 	secure: !DEBUG,
   domain: DEBUG ? undefined : DOMAIN,
 };
-console.log(cookieOption)
 
 const cookiePrefix = 'spotify_clone';
 
