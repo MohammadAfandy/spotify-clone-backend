@@ -12,6 +12,7 @@ import {
   AUTHORIZE_URI,
   REDIRECT_URI,
   FRONTEND_URI,
+  DOMAIN,
   DEBUG,
 } from './utils/constants';
 import Api from './utils/api';
@@ -28,7 +29,9 @@ app.use(express.urlencoded({ extended: true }));
 
 const cookieOption = {
 	secure: !DEBUG,
+  domain: DEBUG ? undefined : DOMAIN,
 };
+console.log(cookieOption)
 
 const cookiePrefix = 'spotify_clone';
 
