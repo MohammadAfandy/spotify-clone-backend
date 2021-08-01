@@ -17,6 +17,7 @@ npm install
 
 ### Rename .env.example to .env
 ```
+PORT = <Application Port>
 CLIENT_ID = <Client ID from the Spotify Developer Dashboard>
 CLIENT_SECRET = <Client Secret from the Spotify Developer Dashboard>
 REDIRECT_URI = <Redirect URL specified from the Spotify Developer Dashboard>

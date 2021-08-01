@@ -7,6 +7,7 @@ import lyricsFinder from 'lyrics-finder';
 
 import { randomString } from './utils/helpers';
 import {
+  PORT,
   CLIENT_ID,
   AUTHORIZE_URI,
   REDIRECT_URI,
@@ -15,8 +16,6 @@ import {
 } from './utils/constants';
 import Api from './utils/api';
 import axios from 'axios';
-
-const PORT = 3001;
 
 const app = express();
 app.use(cors({
