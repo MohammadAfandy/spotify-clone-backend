@@ -12,8 +12,6 @@ import {
   AUTHORIZE_URI,
   REDIRECT_URI,
   FRONTEND_URI,
-  DOMAIN,
-  DEBUG,
 } from './utils/constants';
 import Api from './utils/api';
 import axios from 'axios';
@@ -26,11 +24,6 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-const cookieOption = {
-	secure: !DEBUG,
-  domain: DEBUG ? undefined : DOMAIN,
-};
 
 const cookiePrefix = 'spotify_clone';
 
@@ -70,9 +63,9 @@ app.get('/callback', async (req, res, next) => {
         error: 'state not valid',
       }));
     }
-  
+
     res.clearCookie(cookiePrefix + '_state');
-  
+
     const response = await Api.post('/token', querystring.stringify({
       code: code,
       redirect_uri: REDIRECT_URI,
@@ -93,11 +86,14 @@ app.get('/callback', async (req, res, next) => {
     });
     const { country } = responseProfile.data;
 
-    res.cookie(cookiePrefix + '_access_token', access_token, cookieOption);
-    res.cookie(cookiePrefix + '_refresh_token', refresh_token, cookieOption);
-    res.cookie(cookiePrefix + '_country', country, cookieOption);
+    const queryParams = querystring.stringify({
+      access_token,
+      refresh_token,
+      country,
+    });
 
-    res.redirect(FRONTEND_URI);
+    res.redirect(FRONTEND_URI + '#' + queryParams);
+
   } catch (error) {
     console.error('error', error);
     return res.redirect(FRONTEND_URI + '?' + querystring.stringify({
