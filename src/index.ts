@@ -14,7 +14,7 @@ import {
   FRONTEND_URI,
 } from './utils/constants';
 import Api from './utils/api';
-import axios from 'axios';
+import axios, { Method } from 'axios';
 
 const app = express();
 app.use(cors({
@@ -126,20 +126,18 @@ app.post('/refresh_token', async (req, res, next) => {
 });
 
 
-app.post('/spotify', async (req, res, next) => {
+app.all('/spotify/:path(*)', async (req, res, next) => {
   try {
     // const { origin } = req.headers;
     // if (origin !== FRONTEND_URI) {
     //   throw new Error('Request not allowed.');
     // }
 
-    const {
-      url = '',
-      method = 'get',
-      data = null,
-    } = req.body;
-    if (!url) {
-      throw new Error('Url not valid');
+    const { path } = req.params;
+    const method = req.method as Method;
+    let data: Object | null = null;
+    if (['post', 'put', 'patch'].includes(method.toLowerCase())) {
+      data = req.body;
     }
 
     const responseToken = await Api.post('/token', querystring.stringify({
@@ -152,14 +150,15 @@ app.post('/spotify', async (req, res, next) => {
     const { access_token } = responseToken.data;
     const response = await axios({
       method,
-      url,
+      url: `https://api.spotify.com/v1/${path}`,
+      params: req.query,
       data,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${access_token}`,
       }
     });
-  
+
     res.json(response.data);
   } catch (error) {
     console.error(error);
