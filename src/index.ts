@@ -125,6 +125,48 @@ app.post('/refresh_token', async (req, res, next) => {
   }
 });
 
+
+app.post('/spotify', async (req, res, next) => {
+  try {
+    const { origin } = req.headers;
+    if (origin !== FRONTEND_URI) {
+      throw new Error('Request not allowed.');
+    }
+
+    const {
+      url = '',
+      method = 'get',
+      data = null,
+    } = req.body;
+    if (!url) {
+      throw new Error('Url not valid');
+    }
+
+    const responseToken = await Api.post('/token', querystring.stringify({
+      grant_type: 'client_credentials',
+    }));
+    if (responseToken.status !== 200) {
+      throw new Error(responseToken.data);
+    }
+
+    const { access_token } = responseToken.data;
+    const response = await axios({
+      method,
+      url,
+      data,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${access_token}`,
+      }
+    });
+  
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 app.get('/lyrics', async (req, res, next) => {
   try {
     const { artist, title } = req.query;
