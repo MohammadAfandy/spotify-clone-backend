@@ -128,10 +128,10 @@ app.post('/refresh_token', async (req, res, next) => {
 
 app.post('/spotify', async (req, res, next) => {
   try {
-    const { origin } = req.headers;
-    if (origin !== FRONTEND_URI) {
-      throw new Error('Request not allowed.');
-    }
+    // const { origin } = req.headers;
+    // if (origin !== FRONTEND_URI) {
+    //   throw new Error('Request not allowed.');
+    // }
 
     const {
       url = '',
