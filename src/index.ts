@@ -18,8 +18,8 @@ import axios, { Method } from 'axios';
 
 const app = express();
 app.use(cors({
-  origin: FRONTEND_URI,
-  credentials: true,
+  // origin: FRONTEND_URI,
+  // credentials: true,
 }));
 app.use(cookieParser());
 app.use(express.json());
