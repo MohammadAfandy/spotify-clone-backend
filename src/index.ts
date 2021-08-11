@@ -132,11 +132,6 @@ app.post('/refresh_token', async (req, res, next) => {
 
 app.all('/spotify/:path(*)', async (req, res, next) => {
   try {
-    // const { origin } = req.headers;
-    // if (origin !== FRONTEND_URI) {
-    //   throw new Error('Request not allowed.');
-    // }
-
     const { path } = req.params;
     const method = req.method as Method;
     let data: Object | null = null;
