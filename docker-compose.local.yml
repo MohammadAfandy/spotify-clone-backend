@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  web-app:
+    container_name: spotify_clone_backend
+    build: .
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
+    command: npm run dev

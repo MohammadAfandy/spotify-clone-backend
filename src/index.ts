@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import cookieParser from 'cookie-parser';
 import querystring from 'querystring';
 // @ts-ignore
@@ -12,14 +12,17 @@ import {
   AUTHORIZE_URI,
   REDIRECT_URI,
   FRONTEND_URI,
+  DEBUG,
 } from './utils/constants';
 import Api from './utils/api';
 import axios, { Method } from 'axios';
 
 const app = express();
-app.use(cors({
-  origin: FRONTEND_URI,
-}));
+
+const corsOptions: CorsOptions = {};
+if (!DEBUG) corsOptions.origin = FRONTEND_URI;
+app.use(cors(corsOptions));
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,0 +1,46 @@
+name: Deploy Application
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Create .env File
+      run: |
+        echo PORT=${{ secrets.PORT }} >> .env
+        echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
+        echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
+        echo REDIRECT_URI=${{ secrets.REDIRECT_URI }} >> .env
+        echo FRONTEND_URI=${{ secrets.FRONTEND_URI }} >> .env
+        echo DEBUG=true=${{ secrets.DEBUG }} >> .env
+
+    - name: Build Project 
+      run: npm run build
+
+    - name: Build and Push Docker Image
+      uses: mr-smithers-excellent/docker-build-push@v5
+      with:
+        image: mohammadafandy/spotify-clone-backend
+        registry: docker.io
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}

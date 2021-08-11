@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  web-app:
+    container_name: spotify_clone_backend
+    build: .
+    ports:
+      - ${PORT}:${PORT}
