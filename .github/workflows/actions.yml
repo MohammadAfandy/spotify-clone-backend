@@ -42,5 +42,6 @@ jobs:
       with:
         image: mohammadafandy/spotify-clone-backend
         registry: docker.io
+        addLatest: true,
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
