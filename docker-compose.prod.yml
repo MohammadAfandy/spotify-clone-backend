@@ -3,6 +3,6 @@ version: '3'
 services:
   web-app:
     container_name: spotify_clone_backend
-    build: .
+    image: mohammadafandy/spotify-clone-backend:${APP_IMAGE_TAG}
     ports:
-      - ${PORT}:${PORT}
+      - ${APP_PORT}:${APP_PORT}
