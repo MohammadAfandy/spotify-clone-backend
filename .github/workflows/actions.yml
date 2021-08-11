@@ -55,7 +55,6 @@ jobs:
         PORT: ${{ secrets.SSH_PORT }}
         KEY: ${{ secrets.SSH_KEY }}
         script: |
-          echo '${{ steps.docker-build.outputs.tags }}'
           export APP_IMAGE_TAG=${{ steps.docker-build.outputs.tags }}
           export APP_PORT=${{ secrets.PORT }}
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}

@@ -30,7 +30,9 @@ app.use(express.urlencoded({ extended: true }));
 const cookiePrefix = 'spotify_clone';
 
 app.get('/', (req, res, next) => {
-  res.send('hello from spotify clone backend');
+  res.json({
+    message: 'hello from spotify clone backend'
+  });
 });
 
 app.get('/login', (req, res, next) => {
