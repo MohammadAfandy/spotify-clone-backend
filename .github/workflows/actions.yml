@@ -32,7 +32,7 @@ jobs:
         echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
         echo REDIRECT_URI=${{ secrets.REDIRECT_URI }} >> .env
         echo FRONTEND_URI=${{ secrets.FRONTEND_URI }} >> .env
-        echo DEBUG=true=${{ secrets.DEBUG }} >> .env
+        echo DEBUG=${{ secrets.DEBUG }} >> .env
 
     - name: Build Project 
       run: npm run build
@@ -43,7 +43,6 @@ jobs:
       with:
         image: mohammadafandy/spotify-clone-backend
         registry: docker.io
-        addLatest: true,
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     
