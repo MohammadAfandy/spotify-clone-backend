@@ -39,9 +39,26 @@ jobs:
 
     - name: Build and Push Docker Image
       uses: mr-smithers-excellent/docker-build-push@v5
+      id: docker-build
       with:
         image: mohammadafandy/spotify-clone-backend
         registry: docker.io
         addLatest: true,
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        USERNAME: ${{ secrets.SSH_USER }}
+        PORT: ${{ secrets.SSH_PORT }}
+        KEY: ${{ secrets.SSH_KEY }}
+        script: |
+          echo '${{ steps.docker-build.outputs.tags }}'
+          export APP_IMAGE_TAG=${{ steps.docker-build.outputs.tags }}
+          export APP_PORT=${{ secrets.PORT }}
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          cd ~/apps/spotify-clone-backend
+          git pull
+          docker-compose -f docker-compose.prod.yml up -d --build
