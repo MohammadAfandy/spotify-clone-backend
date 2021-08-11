@@ -4,6 +4,7 @@ services:
   web-app:
     container_name: spotify_clone_backend
     build: .
+    restart: unless-stopped
     ports:
       - ${PORT}:${PORT}
     volumes:

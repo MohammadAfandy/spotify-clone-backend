@@ -12,7 +12,6 @@ FROM node:16-alpine3.11
 RUN apk add --no-cache tzdata
 ENV TZ Asia/Jakarta
 WORKDIR /usr/src/app
-COPY .env ./
 COPY package*.json ./
 RUN npm install
 COPY --from=builder /usr/src/app/dist/ dist/

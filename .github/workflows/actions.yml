@@ -25,15 +25,6 @@ jobs:
     - name: Install Dependencies
       run: npm ci
 
-    - name: Create .env File
-      run: |
-        echo PORT=${{ secrets.PORT }} >> .env
-        echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
-        echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
-        echo REDIRECT_URI=${{ secrets.REDIRECT_URI }} >> .env
-        echo FRONTEND_URI=${{ secrets.FRONTEND_URI }} >> .env
-        echo DEBUG=${{ secrets.DEBUG }} >> .env
-
     - name: Build Project 
       run: npm run build
 

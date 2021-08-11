@@ -4,5 +4,8 @@ services:
   web-app:
     container_name: spotify_clone_backend
     image: mohammadafandy/spotify-clone-backend:${APP_IMAGE_TAG}
+    restart: unless-stopped
     ports:
       - ${APP_PORT}:${APP_PORT}
+    env_file:
+      - .env
