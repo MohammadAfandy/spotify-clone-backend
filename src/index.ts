@@ -4,8 +4,10 @@ import cookieParser from 'cookie-parser';
 import querystring from 'querystring';
 // @ts-ignore
 import lyricsFinder from 'lyrics-finder';
+import geoip from 'geoip-lite';
+import myCache from './utils/cache';
 
-import { randomString } from './utils/helpers';
+import { randomString, getIpAddress } from './utils/helpers';
 import {
   PORT,
   CLIENT_ID,
@@ -76,10 +78,6 @@ app.get('/callback', async (req, res, next) => {
       grant_type: 'authorization_code',
     }));
 
-    if (response.status !== 200) {
-      throw new Error(response.data);
-    }
-
     const { access_token, refresh_token } = response.data;
 
     const responseProfile = await axios.get('https://api.spotify.com/v1/me', {
@@ -119,10 +117,6 @@ app.post('/refresh_token', async (req, res, next) => {
       refresh_token: refreshToken,
     }));
 
-    if (response.status !== 200) {
-      throw new Error(response.data);
-    }
-  
     res.json(response.data);
   } catch (error) {
     next(error);
@@ -139,18 +133,36 @@ app.all('/spotify/:path(*)', async (req, res, next) => {
       data = req.body;
     }
 
-    const responseToken = await Api.post('/token', querystring.stringify({
-      grant_type: 'client_credentials',
-    }));
-    if (responseToken.status !== 200) {
-      throw new Error(responseToken.data);
+    // get access token if it is not available in cache
+    let access_token = myCache.get('access_token') as string || '';
+    if (!access_token) {
+      console.log('requesting access token');
+      const responseCredential = await Api.post('/token', querystring.stringify({
+        grant_type: 'client_credentials',
+      }));
+      access_token = responseCredential.data.access_token;
+
+      // set TTL cache based on expires_in
+      const expires_in = responseCredential.data.expires_in;
+      myCache.set('access_token', access_token, expires_in);
     }
 
-    const { access_token } = responseToken.data;
+    const ip = getIpAddress(req);
+    let country = 'ID';
+    if (ip) {
+      const geoipRes = geoip.lookup(ip);
+      if (geoipRes) {
+        country = geoipRes.country;
+      }
+    }
+
     const response = await axios({
       method,
       url: `https://api.spotify.com/v1/${path}`,
-      params: req.query,
+      params: {
+        country,
+        ...req.query,
+      },
       data,
       headers: {
         'Content-Type': 'application/json',
