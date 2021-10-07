@@ -33,7 +33,7 @@ const cookiePrefix = 'spotify_clone';
 
 app.get('/', (req, res, next) => {
   res.json({
-    message: 'hello from spotify clone backend'
+    message: 'spotify clone backend'
   });
 });
 
