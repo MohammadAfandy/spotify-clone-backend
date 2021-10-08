@@ -26,6 +26,7 @@ export const sleep = (ms: number): Promise<void> => {
 
 export const getQueryParamAuthorize = (): SpotifyAuthorizeQuery => {
   const state = randomString();
+  let a = '';
   return {
     response_type: "code",
     client_id: CLIENT_ID,
@@ -33,5 +34,5 @@ export const getQueryParamAuthorize = (): SpotifyAuthorizeQuery => {
     redirect_uri: REDIRECT_URI,
     state: state,
     show_dialog: true,
-  };
+  }
 };

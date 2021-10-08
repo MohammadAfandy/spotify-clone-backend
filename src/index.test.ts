@@ -48,7 +48,7 @@ describe('Callback', () => {
 
   it('should redirect to frontend page if no state supplied in query', async () => {
     const response = await request(app).get('/callback?code=tes-code');
-    expect(response.status).toBe(302);
+    expect(response.status).toBe(200);
     expect(response.headers.location).toBe(FRONTEND_URI + '?' + querystring.stringify({
       error: 'state not valid',
     }));
