@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, CookieOptions } from 'express';
 import cors, { CorsOptions } from 'cors';
 import cookieParser from 'cookie-parser';
 import querystring from 'querystring';
@@ -15,7 +15,7 @@ import {
   REDIRECT_URI,
   FRONTEND_URI,
   COOKIE_PREFIX,
-  DEBUG,
+  // DEBUG,
 } from './utils/constants';
 import Api from './utils/api';
 import axios, { Method } from 'axios';
@@ -23,8 +23,16 @@ import axios, { Method } from 'axios';
 const app = express();
 
 const corsOptions: CorsOptions = {};
-if (!DEBUG) corsOptions.origin = FRONTEND_URI;
+// if (!DEBUG) corsOptions.origin = FRONTEND_URI;
+corsOptions.origin = FRONTEND_URI;
+corsOptions.credentials = true;
 app.use(cors(corsOptions));
+
+const cookieOption: CookieOptions = {
+  httpOnly: true,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  secure: true,
+};
 
 app.use(cookieParser());
 app.use(express.json());
@@ -39,7 +47,7 @@ app.get('/', (req, res, next) => {
 app.get('/login', (req, res, next) => {
   const queryParams = getQueryParamAuthorize();
   const { state } = queryParams;
-  res.cookie(COOKIE_PREFIX + '_state', state);
+  res.cookie(COOKIE_PREFIX + '_state', state, cookieOption);
 
   res.redirect(AUTHORIZE_URI + '?' + querystring.stringify(queryParams));
 });
@@ -81,10 +89,11 @@ app.get('/callback', async (req, res, next) => {
 
     const queryParams = querystring.stringify({
       access_token,
-      refresh_token,
+      // refresh_token,
       country,
     });
 
+    res.cookie(COOKIE_PREFIX + '_refresh_token', refresh_token, cookieOption);
     res.redirect(FRONTEND_URI + '#' + queryParams);
 
   } catch (error) {
@@ -98,7 +107,8 @@ app.get('/callback', async (req, res, next) => {
 
 app.post('/refresh_token', async (req, res, next) => {
   try {
-    const { refresh_token: refreshToken } = req.body;
+    // const { refresh_token: refreshToken } = req.body;
+    const { [COOKIE_PREFIX + '_refresh_token']: refreshToken } = req.cookies;
 
     if (!refreshToken || typeof refreshToken !== 'string') {
       throw new Error('Refresh Token Not Valid');
@@ -163,6 +173,7 @@ app.all('/spotify/:path(*)', async (req, res, next) => {
 
     res.json(response.data);
   } catch (error) {
+    console.error(error);
     next(error);
   }
 });

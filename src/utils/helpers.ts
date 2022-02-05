@@ -29,7 +29,7 @@ export const getQueryParamAuthorize = (): SpotifyAuthorizeQuery => {
   return {
     response_type: "code",
     client_id: CLIENT_ID,
-    scope: `user-read-private user-read-playback-state streaming user-modify-playback-state playlist-modify-public user-library-modify user-top-read user-read-currently-playing playlist-read-private user-follow-read user-read-recently-played playlist-modify-private user-follow-modify user-library-read user-read-email ugc-image-upload`,
+    scope: `ugc-image-upload user-read-playback-state user-modify-playback-state user-read-private user-follow-modify user-follow-read user-library-modify user-library-read streaming user-read-playback-position playlist-modify-private playlist-read-collaborative playlist-read-private user-top-read playlist-modify-public user-read-currently-playing user-read-recently-played`,
     redirect_uri: REDIRECT_URI,
     state: state,
     show_dialog: true,

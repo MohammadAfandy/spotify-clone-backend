@@ -36,7 +36,6 @@ describe('Login Page', () => {
   });
 });
 
-
 describe('Callback', () => {
   it('should redirect to frontend page if no code supplied in query', async () => {
     const response = await request(app).get('/callback?state=tes-state');
@@ -53,7 +52,7 @@ describe('Callback', () => {
       error: 'state not valid',
     }));
   });
-  
+
   it(
     'should redirect to frontend page if state in query is different from state in cookies',
     async () => {
