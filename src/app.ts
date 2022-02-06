@@ -180,10 +180,24 @@ app.all('/spotify/:path(*)', async (req, res, next) => {
 
 app.get('/lyrics', async (req, res, next) => {
   try {
+    const result = {
+      lyric: [],
+      plainLyric: '',
+    };
     const { artist, title } = req.query;
-    const lyric = await lyricsFinder(artist, title);
-    res.json({
-      lyric,
+
+    axios.get('https://api.textyl.co/api/lyrics', {
+      params: {
+        q: `${artist} ${title}`,
+      },
+    }).then((response) => {
+      result.lyric = response.data;
+    }).catch((error) => {
+      result.lyric = [];
+    }).finally(async () => {
+      const lyric = await lyricsFinder(artist, title);
+      result.plainLyric = lyric;
+      res.json(result);
     });
   } catch (error) {
     next(error);
