@@ -125,6 +125,18 @@ app.post('/refresh_token', async (req, res, next) => {
   }
 });
 
+app.post('/logout', async (req, res, next) => {
+  try {
+    res.clearCookie(COOKIE_PREFIX + '_refresh_token');
+
+    res.json({
+      message: 'Logout success',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.all('/spotify/:path(*)', async (req, res, next) => {
   try {
     const { path } = req.params;
