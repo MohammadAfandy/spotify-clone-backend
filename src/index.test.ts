@@ -40,7 +40,7 @@ describe('Callback', () => {
   it('should redirect to frontend page if no code supplied in query', async () => {
     const response = await request(app).get('/callback?state=tes-state');
     expect(response.status).toBe(302);
-    expect(response.headers.location).toBe(FRONTEND_URI + '?' + querystring.stringify({
+    expect(response.headers.location).toBe(FRONTEND_URI + '#' + querystring.stringify({
       error: 'code not valid',
     }));
   });
@@ -48,7 +48,7 @@ describe('Callback', () => {
   it('should redirect to frontend page if no state supplied in query', async () => {
     const response = await request(app).get('/callback?code=tes-code');
     expect(response.status).toBe(302);
-    expect(response.headers.location).toBe(FRONTEND_URI + '?' + querystring.stringify({
+    expect(response.headers.location).toBe(FRONTEND_URI + '#' + querystring.stringify({
       error: 'state not valid',
     }));
   });
@@ -61,7 +61,7 @@ describe('Callback', () => {
         .set('Cookie', [`${COOKIE_PREFIX}_state=tes-state-different`]);
 
       expect(response.status).toBe(302);
-      expect(response.headers.location).toBe(FRONTEND_URI + '?' + querystring.stringify({
+      expect(response.headers.location).toBe(FRONTEND_URI + '#' + querystring.stringify({
         error: 'state not valid',
       }));
     }
