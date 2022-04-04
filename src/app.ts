@@ -58,13 +58,13 @@ app.get('/callback', async (req, res, next) => {
     const currentState = req.cookies[COOKIE_PREFIX + '_state'];
   
     if (!code || typeof code !== 'string') {
-      return res.redirect(FRONTEND_URI + '?' + querystring.stringify({
+      return res.redirect(FRONTEND_URI + '#' + querystring.stringify({
         error: 'code not valid',
       }));
     }
 
     if (!state || state !== currentState) {
-      return res.redirect(FRONTEND_URI + '?' + querystring.stringify({
+      return res.redirect(FRONTEND_URI + '#' + querystring.stringify({
         error: 'state not valid',
       }));
     }
@@ -85,23 +85,27 @@ app.get('/callback', async (req, res, next) => {
         Authorization: `Bearer ${access_token}`,
       },
     });
-    const { country } = responseProfile.data;
+    const { country, product } = responseProfile.data;
 
     const queryParams = querystring.stringify({
       access_token,
       // refresh_token,
       country,
+      product,
     });
 
     res.cookie(COOKIE_PREFIX + '_refresh_token', refresh_token, cookieOption);
     res.redirect(FRONTEND_URI + '#' + queryParams);
 
   } catch (error) {
-    if (error instanceof Error) {
-      return res.redirect(FRONTEND_URI + '?' + querystring.stringify({
-        error: error.message,
-      }));
+    let errMessage = 'Login Failed';
+    if (axios.isAxiosError(error) && error.response) {
+      errMessage = error.response.data;
+      console.error(error?.response);
     }
+    return res.redirect(FRONTEND_URI + '#' + querystring.stringify({
+      error: errMessage,
+    }));
   }
 });
 
@@ -225,7 +229,19 @@ app.use((req, res, next) => {
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   // console.error(err.stack);
   // console.error(err.message);
-  res.status(500).json({ message: err.message || 'Internal Server Error' });
+  let errStatus = 500;
+  let errData = null;
+  let errMessage = err.message;
+  if (axios.isAxiosError(err) && err.response) {
+    console.error(err.response);
+    errStatus = err.response.status;
+    errData = err.response.data;
+    errMessage = err.response.data?.error_description;
+  }
+  res.status(errStatus).json({
+    data: errData,
+    message: errMessage || 'Something went wrong',
+  });
 });
 
 export default app;
